@@ -1,0 +1,45 @@
+name: Go Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Триггерит workflow только при пуше тега версии (например, v1.0.0)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Проверяем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Устанавливаем Go
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22' # Укажите вашу версию Go
+
+      # Устанавливаем зависимости
+      - name: Install dependencies
+        run: |
+          go mod init local_trableshoot
+          go mod tidy
+
+      # Собираем программу
+      - name: Build
+        run: |
+          go build -o ./local_trableshoot ./cmd/app
+          
+      # Архивируем собранный файл
+      - name: Archive artifact
+        run: |
+          tar -czvf local_trableshoot.tar.gz ./local_trableshoot
+
+      # Загружаем в релизы
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./local_trableshoot.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
