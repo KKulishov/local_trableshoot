@@ -21,10 +21,10 @@ jobs:
           go-version: '1.22' # Укажите вашу версию Go
 
       # Устанавливаем зависимости
-      - name: Install dependencies
-        run: |
-          go mod init local_trableshoot
-          go mod tidy
+      #- name: Install dependencies
+      #  run: |
+      #    go mod init local_trableshoot
+      #    go mod tidy
 
       # Собираем программу
       - name: Build
