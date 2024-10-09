@@ -36,7 +36,7 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 Run application 
 
 ```
-./app
+./local_trableshoot
 ```
 
 Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html
