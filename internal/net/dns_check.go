@@ -55,7 +55,7 @@ func tracepathToDNSServer(file *os.File, server string) {
 	fmt.Fprintf(file, "<h3>Трассировка до DNS сервера %s:</h3>\n<pre>", server)
 
 	// Создаем контекст с таймаутом
-	ctx, cancel := context.WithTimeout(context.Background(), 7*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 14*time.Second)
 	defer cancel()
 
 	// Выполняем команду с учетом контекста
