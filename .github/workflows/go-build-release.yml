@@ -21,8 +21,12 @@ jobs:
         with:
           go-version: '1.22'
 
+      #- name: Set env
+      #  run:  export CGO_ENABLED=0 & export GOOS=linux
+
       - name: Build the project
-        run: go build -o ./local_trableshoot ./cmd/app
+        run: | 
+          CGO_ENABLED=0 go build -o ./local_trableshoot ./cmd/app
 
       - name: Archive build
         run: tar -czvf local_trableshoot.tar.gz ./local_trableshoot

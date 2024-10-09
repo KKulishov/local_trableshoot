@@ -33,6 +33,14 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 
 ## Howto work and use 
 
+Download and unpack
+
+```sh 
+# set version 
+version_trableshoot="v0.3"
+wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
+```
+
 Run application 
 
 ```
@@ -42,6 +50,8 @@ Run application
 Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html
 
 ## initialize the project and build 
+
+If you need re build , can use this man (go version 1.22):
 
 ```go
 go mod init local_trableshoot
