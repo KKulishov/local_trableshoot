@@ -37,14 +37,14 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.3"
+version_trableshoot="v0.3.1"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 
-Run application 
+check Run application 
 
 ```
-./local_trableshoot
+sudo local_trableshoot
 ```
 
 Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html
