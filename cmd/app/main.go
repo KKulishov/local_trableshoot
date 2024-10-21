@@ -19,13 +19,14 @@ import (
 func main() {
 
 	containerFlag := kingpin.Flag("container", "Specify container runtime (e.g. docker)").Envar("").Default("").String()
+	checkDns := kingpin.Flag("check-dns", "Tracing to DNS specified in /etc/resolv.conf, default set true").Envar("").Bool()
 	// Парсим аргументы командной строки
 	kingpin.Parse()
 
 	name_host := hostname.HostName()
 	currentTime := time.Now().Format("02.01.2006_15:04:05")
 	// /var/log or /tmp
-	fileName := fmt.Sprintf("/tmp/report_%s_%s.html", name_host, currentTime)
+	fileName := fmt.Sprintf("/var/log/report_%s_%s.html", name_host, currentTime)
 
 	// Создаем файл отчета с помощью функции из configs
 	file, err := configs.CreateReportFile(fileName)
@@ -35,13 +36,14 @@ func main() {
 	}
 	defer file.Close()
 
+	// Создаем wait group для синхронизации горутин
+	//var wg sync.WaitGroup
+
 	// Добавляем список процессов&памяти в HTML
 	hostname.GetHostName(file)
 	top.GetSummary(file)
 	top.Get_atop_processes_lists(file)
-	fmt.Println("DockerSet:", *containerFlag)
 	if *containerFlag == "docker" {
-		fmt.Println("DockerSet:", containerFlag)
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
 	}
@@ -51,7 +53,9 @@ func main() {
 	net.GetConnections(file)
 	net.GetNetworkStats(file)
 	net.GetTrableConnections(file)
-	net.CheckDnS(file)
+	if *checkDns {
+		net.CheckDnS(file)
+	}
 	disk.GetDisksInfo(file)
 	kernel.GetKernelAndModules(file)
 
@@ -59,6 +63,7 @@ func main() {
 	// ToDo add lsof
 	// ToDo add ping& traceroute
 	// try upload to s3
+	//wg.Wait()
 
 	fmt.Println("Отчет о процессах создан:", fileName)
 }

@@ -4,11 +4,15 @@ add arg and env
 
 if you set container 
 
+show utilization rates of the top 10 by cpu and mem container in docker 
 ```
 local_trableshoot --container=docker
 ```
 
-show utilization rates of the top 10 by cpu and mem container in docker 
+Tracing to DNS specified in /etc/resolv.conf, default set false
+```
+local_trableshoot --check-dns
+```
 
 ## use tag 
 

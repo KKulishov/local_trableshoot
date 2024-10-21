@@ -44,10 +44,16 @@ wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$vers
 check Run application 
 
 ```
-sudo local_trableshoot
+sudo local_trableshoot 
 ```
 
 Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html
+
+
+If need check dns and top used cpu&mem in container, used args:
+```
+sudo local_trableshoot  --check-dns --container=docker
+```
 
 ## initialize the project and build 
 
