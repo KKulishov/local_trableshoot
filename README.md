@@ -26,6 +26,10 @@ check system {{ monit_hostname }}
 ```
 other examples, you can see [here](https://www.mmonit.com/monit/documentation/monit.html)
 
+## Description of releases
+
+Description of releases and new features [this](./docs/realese.md) 
+
 ##  This project helps in troubleshooting the system
 
 - when there is an abnormal load on the system and it is difficult to understand the true cause of the problem through standard monitoring systems
