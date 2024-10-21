@@ -23,6 +23,9 @@ jobs:
 
       #- name: Set env
       #  run:  export CGO_ENABLED=0 & export GOOS=linux
+      #- name: Go the project
+      #  run: | 
+      #    go mod download
 
       - name: Build the project
         run: | 

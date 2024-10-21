@@ -1,3 +1,15 @@
+## v0.3.4
+
+add arg and env 
+
+if you set container 
+
+```
+local_trableshoot --container=docker
+```
+
+show utilization rates of the top 10 by cpu and mem container in docker 
+
 ## use tag 
 
 ```sh
