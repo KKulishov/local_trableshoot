@@ -25,6 +25,6 @@ git push origin v*.*
 ```
 
 
-- Now version v0.3.1
+- Now version v0.3.4
 
 
