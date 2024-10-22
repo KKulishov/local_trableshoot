@@ -1,4 +1,12 @@
-- Now version v0.3.4
+- Now version v0.3.5
+
+## v0.3.5
+
+add rotate report file,  by default set 10. 
+
+```
+local_trableshoot --count-rotate=20
+```
 
 ## v0.3.4
 
