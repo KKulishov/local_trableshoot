@@ -10,6 +10,7 @@ import (
 	"local_trableshoot/internal/mem"
 	"local_trableshoot/internal/net"
 	"local_trableshoot/internal/proc"
+	"local_trableshoot/internal/rotate"
 	"local_trableshoot/internal/top"
 	"time"
 
@@ -36,6 +37,7 @@ func main() {
 	}
 	defer file.Close()
 
+	// TODO parallel run
 	// Создаем wait group для синхронизации горутин
 	//var wg sync.WaitGroup
 
@@ -59,11 +61,12 @@ func main() {
 	disk.GetDisksInfo(file)
 	kernel.GetKernelAndModules(file)
 
-	// ToDO add atop
 	// ToDo add lsof
 	// ToDo add ping& traceroute
 	// try upload to s3
 	//wg.Wait()
 
+	// Очистка старых отчетов
+	rotate.CleanUpOldReports("/var/log", "report_", 10)
 	fmt.Println("Отчет о процессах создан:", fileName)
 }
