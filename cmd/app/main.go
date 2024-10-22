@@ -19,8 +19,9 @@ import (
 
 func main() {
 
-	containerFlag := kingpin.Flag("container", "Specify container runtime (e.g. docker)").Envar("").Default("").String()
+	containerFlag := kingpin.Flag("container", "Specify container runtime (e.g. docker)").Envar("container").Default("").String()
 	checkDns := kingpin.Flag("check-dns", "Tracing to DNS specified in /etc/resolv.conf, default set true").Envar("").Bool()
+	countRotate := kingpin.Flag("count-rotate", "Delete old files that are older than the specified number, default set 10").Envar("count-rotate").Default("10").Int()
 	// Парсим аргументы командной строки
 	kingpin.Parse()
 
@@ -67,6 +68,6 @@ func main() {
 	//wg.Wait()
 
 	// Очистка старых отчетов
-	rotate.CleanUpOldReports("/var/log", "report_", 10)
+	rotate.CleanUpOldReports("/var/log", "report_", *countRotate)
 	fmt.Println("Отчет о процессах создан:", fileName)
 }

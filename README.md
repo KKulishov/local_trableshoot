@@ -41,7 +41,7 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.3.1"
+version_trableshoot="v0.3.5"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 
@@ -51,8 +51,12 @@ check Run application
 sudo local_trableshoot 
 ```
 
-Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html
+Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted. 
 
+If need change the number of old reports to delete, please set:
+```
+sudo local_trableshoot --count-rotate=20
+```
 
 If need check dns and top used cpu&mem in container, used args:
 ```
