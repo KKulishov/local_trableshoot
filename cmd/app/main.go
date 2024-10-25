@@ -18,7 +18,7 @@ func main() {
 	name_host := hostname.HostName()
 	currentTime := time.Now().Format("02.01.2006_15:04:05")
 	// /var/log or /tmp
-	fileName := fmt.Sprintf("/tmp/report_%s_%s.html", name_host, currentTime)
+	fileName := fmt.Sprintf("/var/log/report_%s_%s.html", name_host, currentTime)
 
 	// Создаем файл отчета с помощью функции из configs
 	file, err := configs.CreateReportFile(fileName)

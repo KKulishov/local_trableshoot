@@ -1,3 +1,7 @@
+//go:build linux
+// +build linux
+
+// internal/platform/linux/linux.go
 package linux
 
 import (
