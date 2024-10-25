@@ -26,6 +26,16 @@ check system {{ monit_hostname }}
 ```
 other examples, you can see [here](https://www.mmonit.com/monit/documentation/monit.html)
 
+## Flags&Env
+
+| Args             | Variable         | Type    | Default | Description      |
+|------------------|------------------|---------|---------|------------------|
+| container        | container        | string  | ""      | Specify container runtime, top 10 cpu&mem usage |
+| check-dns      | check-dns          | Bool    | false   | checking dns availability from /etc/resolv.conf |
+| count-rotate   | count-rotate       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
+
+
+
 ## Description of releases
 
 Description of releases and new features [this](./docs/realese.md) 
