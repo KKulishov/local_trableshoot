@@ -2,10 +2,16 @@ package hostname
 
 import (
 	"fmt"
+	"local_trableshoot/configs"
 	"local_trableshoot/internal/format"
 	"os"
 	"time"
 )
+
+func GetVersionApp(file *os.File) {
+	format.WriteHeader(file, "Version app trableshoot")
+	format.WritePreformatted(file, configs.Version)
+}
 
 func GetHostName(file *os.File) {
 	// Hostname

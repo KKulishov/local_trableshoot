@@ -3,6 +3,7 @@ package proc
 import (
 	"fmt"
 	"html"
+	"local_trableshoot/internal/format"
 	"os"
 	"os/exec"
 )
@@ -41,4 +42,11 @@ func GetProcessesTree(file *os.File) {
 	}
 
 	fmt.Fprintln(file, "</pre></div>")
+}
+
+func ShowAllCpu(file *os.File) {
+	// Show mem linux
+	format.WriteHeader(file, "Show all cpu")
+	currentOutput := format.ExecuteCommand("nproc")
+	format.WritePreformatted(file, currentOutput)
 }

@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+var Version = "unknown"
+
 // путь к логам atop
 var AtopLogDir = "/var/log/atop"
 

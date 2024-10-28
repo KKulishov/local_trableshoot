@@ -3,6 +3,7 @@ package top
 import (
 	"fmt"
 	"local_trableshoot/configs"
+	"local_trableshoot/internal/format"
 	"os"
 	"os/exec"
 	"strings"
@@ -37,11 +38,13 @@ func Get_atop_processes_lists(file *os.File) {
 		}
 
 		// Запись информации о процессах по CPU
-		writeSection("Processes by CPU", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -O", logFile, start, end))
+		writeSection("Atop processes by CPU", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -O", logFile, start, end))
 		// Запись информации о процессах по MEM
-		writeSection("Processes by MEM", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -G", logFile, start, end))
+		writeSection("Atop processes by MEM", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -G", logFile, start, end))
 		// Запись информации о процессах по IOPS
-		writeSection("Processes by IOPS", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -D", logFile, start, end))
+		writeSection("Atop processes by IOPS", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -D", logFile, start, end))
+		// Запись информации о процессах по NET
+		writeSection("Atop processes by NET", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -N", logFile, start, end))
 	}
 }
 
@@ -52,6 +55,7 @@ func GetSummary(file *os.File) {
 		fmt.Fprintln(file, "<div><pre>Убедитесь, что atop установлена в системе.</pre></div>")
 	} else {
 		// Выполнение команды для вывода информации о CPU с помощью atop
+		format.WriteHeader(file, "Show atop process")
 		cpuCmd := exec.Command("sh", "-c", "atop -L 180 -a 1 1 | sed -rn '1,/^\\s+/ p' | tail -n +3 | head -n -1")
 		cpuOutput, err := cpuCmd.CombinedOutput()
 		if err != nil {

@@ -25,7 +25,10 @@ type LinuxDiagnostic struct{}
 // Добавляем список процессов&памяти в HTM
 
 func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
+	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
+	proc.ShowAllCpu(file)
+	mem.ShowMem(file)
 	top.GetSummary(file)
 	top.Get_atop_processes_lists(file)
 	if *flags.ContainerFlag == "docker" {

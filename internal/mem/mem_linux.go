@@ -2,6 +2,7 @@ package mem
 
 import (
 	"fmt"
+	"local_trableshoot/internal/format"
 	"os"
 	"os/exec"
 )
@@ -22,4 +23,11 @@ func AddProcessesByMem(file *os.File) {
 	}
 
 	fmt.Fprintln(file, "</pre></div>")
+}
+
+func ShowMem(file *os.File) {
+	// Show mem linux
+	format.WriteHeader(file, "Show all mem")
+	currentOutput := format.ExecuteCommand("free", "-m")
+	format.WritePreformatted(file, currentOutput)
 }
