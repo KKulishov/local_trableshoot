@@ -31,8 +31,9 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 | Args             | Variable         | Type    | Default | Description      |
 |------------------|------------------|---------|---------|------------------|
 | container        | container        | string  | ""      | Specify container runtime, top 10 cpu&mem usage, (e.g. docker) |
-| check-dns      | check-dns          | Bool    | false   | checking dns availability from /etc/resolv.conf |
-| count-rotate   | count-rotate       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
+| check-dns      | CHECK_DNS          | Bool    | false   | checking dns availability from /etc/resolv.conf |
+| count-rotate   | COUNT_ROTATE       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
+|report-dir        | REPORT_DIR        | string  | "/var/log"   | Path to the save report directory  |
 
 
 
@@ -40,12 +41,12 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 
 Description of releases and new features [this](./docs/realese.md) 
 
-##  This project helps in troubleshooting the system
+## This project helps in troubleshooting the system
 
 - when there is an abnormal load on the system and it is difficult to understand the true cause of the problem through standard monitoring systems
 - written by go and description of the structure according to go [standards](https://github.com/golang-standards/project-layout/blob/master/README.md) 
 
-## Howto work and use 
+## How to work and use 
 
 Download and unpack
 

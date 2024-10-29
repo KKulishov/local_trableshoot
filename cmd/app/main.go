@@ -18,7 +18,7 @@ func main() {
 	name_host := hostname.HostName()
 	currentTime := time.Now().Format("02.01.2006_15:04:05")
 	// /var/log or /tmp
-	fileName := fmt.Sprintf("/tmp/report_%s_%s.html", name_host, currentTime)
+	fileName := fmt.Sprintf("%s/report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
 
 	// Создаем файл отчета с помощью функции из configs
 	file, err := configs.CreateReportFile(fileName)
@@ -39,6 +39,6 @@ func main() {
 	diag.BaseDiagnostics(file)
 
 	// Очистка старых отчетов
-	rotate.CleanUpOldReports("/var/log", "report_", *flags.CountRotate)
+	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
 	fmt.Println("Отчет о процессах создан:", fileName)
 }
