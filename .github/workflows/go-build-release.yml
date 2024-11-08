@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.release.tag_name }}
     permissions:
       contents: write  
       packages: write
@@ -29,7 +31,7 @@ jobs:
 
       - name: Build the project
         run: | 
-          CGO_ENABLED=0 go build -o ./local_trableshoot -ldflags="-X 'local_trableshoot/configs.Version=0.3.6'" ./cmd/app
+          CGO_ENABLED=0 go build -o ./local_trableshoot -ldflags="-X 'local_trableshoot/configs.Version=$VERSION'" ./cmd/app
 
       - name: Archive build
         run: tar -czvf local_trableshoot.tar.gz ./local_trableshoot
