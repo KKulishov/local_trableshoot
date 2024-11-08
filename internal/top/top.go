@@ -38,13 +38,13 @@ func Get_atop_processes_lists(file *os.File) {
 		}
 
 		// Запись информации о процессах по CPU
-		writeSection("Atop processes by CPU", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -O", logFile, start, end))
+		writeSection("Atop processes by CPU, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -O", logFile, start, end))
 		// Запись информации о процессах по MEM
-		writeSection("Atop processes by MEM", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -G", logFile, start, end))
+		writeSection("Atop processes by MEM, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -G", logFile, start, end))
 		// Запись информации о процессах по IOPS
-		writeSection("Atop processes by IOPS", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -D", logFile, start, end))
+		writeSection("Atop processes by IOPS, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -D", logFile, start, end))
 		// Запись информации о процессах по NET
-		writeSection("Atop processes by NET", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -N", logFile, start, end))
+		writeSection("Atop processes by NET, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -N", logFile, start, end))
 	}
 }
 

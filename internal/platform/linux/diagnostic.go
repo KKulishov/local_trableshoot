@@ -24,7 +24,7 @@ type LinuxDiagnostic struct{}
 //var wg sync.WaitGroup
 // Добавляем список процессов&памяти в HTM
 
-func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
+func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
 	proc.ShowAllCpu(file)
@@ -34,6 +34,8 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	if *flags.ContainerFlag == "docker" {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
+		containers.GetDockerStatDisk(file)
+		containers.GetDockerStatNetwork(file)
 	}
 	proc.AddProcessesByCPU(file)
 	proc.GetProcessesTree(file)
@@ -45,8 +47,25 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 		net.CheckDnS(file)
 	}
 	disk.GetDisksInfo(file)
+	kernel.GetErrorKernel(file)
 	kernel.GetKernelAndModules(file)
+}
 
+func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
+	hostname.GetVersionApp(file)
+	hostname.GetHostName(file)
+	proc.ShowAllCpu(file)
+	mem.ShowMem(file)
+	if *flags.ContainerFlag == "docker" {
+		containers.GetDockerStatCpu(file)
+		containers.GetDockerStatMem(file)
+		containers.GetDockerStatDisk(file)
+		containers.GetDockerStatNetwork(file)
+	}
+	proc.AddProcessesByCPU(file)
+	mem.AddProcessesByMem(file)
+	top.Get_atop_processes_lists(file)
+	kernel.GetErrorKernel(file)
 }
 
 // top network traffic used process

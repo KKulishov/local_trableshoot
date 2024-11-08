@@ -1,4 +1,12 @@
-- Now version v0.3.5
+- Now version v0.3.6
+
+## v0.3.6
+
+- adding 2 report forms, full and short (report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html and full_report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html)
+- adding top 10 disk and network utilization in docker containers
+- output of kernel errors and system messages
+- Added version output to the report and cli command (--version)
+- Added argument in which directory to store reports (--report-dir)
 
 ## v0.3.5
 

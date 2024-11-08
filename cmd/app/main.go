@@ -17,11 +17,18 @@ func main() {
 
 	name_host := hostname.HostName()
 	currentTime := time.Now().Format("02.01.2006_15:04:05")
-	// /var/log or /tmp
-	fileName := fmt.Sprintf("%s/report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
 
+	fileNamequick := fmt.Sprintf("%s/report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
+	fileName := fmt.Sprintf("%s/full_report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
 	// Создаем файл отчета с помощью функции из configs
 	file, err := configs.CreateReportFile(fileName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+
+	filequick, err := configs.CreateReportFile(fileNamequick)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -36,9 +43,13 @@ func main() {
 		fmt.Println("Unsupported platform")
 		return
 	}
-	diag.BaseDiagnostics(file)
+
+	diag.BaseDiagnostics(filequick)
+	diag.FullDiagnostics(file)
 
 	// Очистка старых отчетов
 	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
+	rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
+	fmt.Println("Отчет о процессах создан:", fileNamequick)
 	fmt.Println("Отчет о процессах создан:", fileName)
 }

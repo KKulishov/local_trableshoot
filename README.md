@@ -4,8 +4,8 @@ Local trableshoot linux system  and save to  local report for html format.
 the file contains a data report:
  - atop  
  - session 
- - atop (cpu/mem/IOps) for top. 
- - top 10 containers used cpu&mem (for now docker)
+ - atop (cpu/mem/IOps/Net) for top. 
+ - top 10 containers used cpu/mem/disk/net (for now docker)
  - process top cpu and process tree 
  - process top mem
  - tcp/udp/sockets connect 
@@ -14,6 +14,7 @@ the file contains a data report:
  - dns check  
  - device (used,innodes,mount)
  - kernel used modules and dmesg last messages
+ - dmesg and messages for (error|critical|fail|panic|warn) 
 
 example report in [this](./docs/example/report_tooz-Aspire-V3-571G_09.10.2024_09:28:44.html) 
 
@@ -62,7 +63,7 @@ check Run application
 sudo local_trableshoot 
 ```
 
-Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted. 
+Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html and /var/log/full_report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/full_report_*.html and /var/log/report_*.html , will be deleted. 
 
 If need change the number of old reports to delete, please set:
 ```
