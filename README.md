@@ -35,7 +35,7 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 | check-dns      | CHECK_DNS          | Bool    | false   | checking dns availability from /etc/resolv.conf |
 | count-rotate   | COUNT_ROTATE       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
 |report-dir        | REPORT_DIR        | string  | "/var/log"   | Path to the save report directory  |
-
+|version           |                   | string  | unknown   | Show version build  |
 
 
 ## Description of releases
