@@ -3,7 +3,10 @@ package s3
 import (
 	"context"
 	"fmt"
+	"local_trableshoot/internal/hostname"
 	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -54,7 +57,7 @@ func LoadConfig(filepath string) (*S3Config, error) {
 }
 
 // Функция для загрузки файла в S3 с использованием MinIO
-func UploadToS3(cfg *S3Config, filePath string) error {
+func UploadToS3(cfg *S3Config, hostName, filePath string) error {
 	// Создаем клиента MinIO
 	minioClient, err := minio.New(cfg.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.AccessKeyID, cfg.SecretAccessKey, ""),
@@ -80,8 +83,8 @@ func UploadToS3(cfg *S3Config, filePath string) error {
 		}
 	}
 
-	// Загружаем файл в bucket
-	objectName := filePath // Имя файла в bucket
+	// Создаем путь на S3 с учетом имени хоста
+	objectName := filepath.Join(hostName, filepath.Base(filePath))
 	contentType := "text/plain"
 
 	// Загружаем файл на S3
@@ -90,12 +93,65 @@ func UploadToS3(cfg *S3Config, filePath string) error {
 		return fmt.Errorf("не удалось загрузить файл в S3: %v", err)
 	}
 
-	fmt.Printf("Файл успешно загружен в S3. ETag: %s, VersionID: %s\n", info.ETag, info.VersionID)
+	fmt.Printf("Файл успешно загружен в S3. Path: %s, ETag: %s, VersionID: %s\n", objectName, info.ETag, info.VersionID)
+	return nil
+}
+
+// DeleteOldFiles оставляет последние `retainCount` файлов в папке `hostPath`
+func DeleteOldFiles(cfg *S3Config, hostPath string, retainCount int) error {
+	// Список для хранения информации о файлах
+	var objectInfos []minio.ObjectInfo
+
+	// Создаем клиента MinIO
+	minioClient, err := minio.New(cfg.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.AccessKeyID, cfg.SecretAccessKey, ""),
+		Secure: cfg.UseSSL,
+	})
+	if err != nil {
+		return fmt.Errorf("не удалось создать клиента MinIO: %v", err)
+	}
+
+	// Инициализируем контекст
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Получаем список объектов в указанной директории
+	for object := range minioClient.ListObjects(ctx, cfg.BucketName, minio.ListObjectsOptions{
+		Prefix:    hostPath,
+		Recursive: true,
+	}) {
+		if object.Err != nil {
+			return object.Err
+		}
+		objectInfos = append(objectInfos, object)
+	}
+
+	// Проверяем, нужно ли удалять файлы
+	if len(objectInfos) <= retainCount {
+		fmt.Println("Нет необходимости удалять файлы, количество файлов меньше или равно указанному лимиту.")
+		return nil
+	}
+
+	// Сортируем файлы по дате последнего изменения (от старых к новым)
+	sort.Slice(objectInfos, func(i, j int) bool {
+		return objectInfos[i].LastModified.Before(objectInfos[j].LastModified)
+	})
+
+	// Удаляем старые файлы, оставляем только `retainCount` последних файлов
+	for i := 0; i < len(objectInfos)-retainCount; i++ {
+		object := objectInfos[i]
+		err := minioClient.RemoveObject(ctx, cfg.BucketName, object.Key, minio.RemoveObjectOptions{})
+		if err != nil {
+			return fmt.Errorf("error deleting file %s: %w", object.Key, err)
+		}
+		fmt.Printf("Удален файл %s\n", object.Key)
+	}
+
 	return nil
 }
 
 // отправка отчета в s3
-func Send_report_file(filePath string) {
+func Send_report_file(filePath string, retain int) {
 	// Загружаем конфигурацию из файла для s3
 	configPath := os.Getenv("HOME") + "/.config/report_send_s3"
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -106,7 +162,11 @@ func Send_report_file(filePath string) {
 			fmt.Printf("Ошибка при загрузке конфигурации: %v\n", err)
 			return
 		}
-		err = UploadToS3(cfg, filePath)
+		// Получаем имя хоста
+		hostName := hostname.HostName()
+		// Загружаем файл в S3 с учетом имени хоста
+		err = UploadToS3(cfg, hostName, filePath)
+		DeleteOldFiles(cfg, hostName, retain)
 		if err != nil {
 			fmt.Printf("Ошибка при загрузке в S3: %v\n", err)
 		}

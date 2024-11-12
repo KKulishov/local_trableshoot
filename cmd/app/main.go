@@ -49,7 +49,7 @@ func main() {
 	diag.FullDiagnostics(file)
 
 	// Загружаем конфигурацию из файла для s3
-	s3.Send_report_file(fileName)
+	s3.Send_report_file(fileName, *flags.CountRotate_S3)
 
 	// Очистка старых отчетов
 	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
