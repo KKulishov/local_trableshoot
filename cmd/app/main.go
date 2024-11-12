@@ -8,6 +8,7 @@ import (
 	"local_trableshoot/internal/platform"
 	"local_trableshoot/internal/platform/linux"
 	"local_trableshoot/internal/rotate"
+	"local_trableshoot/internal/s3"
 	"runtime"
 	"time"
 )
@@ -46,6 +47,9 @@ func main() {
 
 	diag.BaseDiagnostics(filequick)
 	diag.FullDiagnostics(file)
+
+	// Загружаем конфигурацию из файла для s3
+	s3.Send_report_file(fileName)
 
 	// Очистка старых отчетов
 	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
