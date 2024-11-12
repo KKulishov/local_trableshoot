@@ -1,4 +1,31 @@
-- Now version v0.3.6
+- Now version v0.3.8
+
+## v0.3.8
+
+Upload s3 report file
+
+verified minio 
+
+create file in ~/.config/report_send_s3
+
+example:
+```
+endpoint_url = s3.ru-1.storage.selcloud.ru
+access_key_id = login
+secret_access_key = password
+use_ssl =  true
+bucket_name = name_bucket
+```
+
+if file ~/.config/report_send_s3  is in the system, then the program will try to download the report to s3 
+
+By default, file rotation occurs when the value is above 30 files.
+
+
+You can specify the quantity
+```sh
+sudo local_trableshoot --count-rotate-s3=20
+```
 
 ## v0.3.6
 

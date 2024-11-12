@@ -76,6 +76,8 @@ If need check dns and top used cpu&mem in container, used args:
 sudo local_trableshoot  --check-dns --container=docker
 ```
 
+add s3 upload reports file. example[this](./docs/s3.md)
+
 ## initialize the project and build 
 
 If you need re build , can use this man (go version 1.22):
