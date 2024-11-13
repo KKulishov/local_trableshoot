@@ -74,5 +74,5 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 // tracert до не стабильнго соединения
 // ToDo add lsof
 // ToDo add ping& traceroute
-// try upload to s3
+// ToDo strace&perf
 //wg.Wait()
