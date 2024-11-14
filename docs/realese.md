@@ -1,4 +1,8 @@
-- Now version v0.3.8
+- Now version v0.3.9
+
+## v0.3.9
+
+fix: s3 to upload charset, set UTF-8. 
 
 ## v0.3.8
 
