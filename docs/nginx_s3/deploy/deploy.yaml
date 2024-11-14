@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-s3-gateway
+  namespace: default
+  labels:
+    app: nginx-s3-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-s3-gateway
+  template:
+    metadata:
+      labels:
+        app: nginx-s3-gateway
+    spec:
+      containers:
+      - name: reviews
+        image: ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:unprivileged-oss-20241111
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 300m
+            memory: 300Mi
+          requests:
+            cpu: 150m
+            memory: 150Mi
+        env:
+            - name: S3_BUCKET_NAME
+              value: "xxxxxx"
+            - name: S3_SERVER
+              value: "s3.xxx.com"
+            - name: S3_SERVER_PROTO
+              value: "https"
+            - name: S3_SERVER_PORT
+              value: "443"
+            - name: S3_STYLE
+              value: "path"
+            - name: S3_REGION
+              value: "us-east-1"
+            #- name: AWS_REGION
+            #  value: "<aws region>"
+            - name: AWS_SIGS_VERSION
+              value: "4"
+            - name: AWS_ACCESS_KEY_ID
+              value: "xxxxx"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "xxxxxxxxxxxxxxxxxxxxxxx"
+            - name: ALLOW_DIRECTORY_LIST
+              value: "true"
+            - name: PROXY_CACHE_MAX_SIZE
+              value: "1g"
+            - name: PROXY_CACHE_INACTIVE
+              value: "60m"
+            #- name: PROVIDE_INDEX_PAGE
+            #  value: "true"
+            #- name: DIRECTORY_LISTING_PATH_PREFIX
+            #  value: "true"
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: http    
+        #securityContext:
+        #  runAsUser: 1000
