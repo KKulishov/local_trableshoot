@@ -8,6 +8,7 @@ import (
 	"local_trableshoot/internal/containers"
 	"local_trableshoot/internal/disk"
 	"local_trableshoot/internal/flags"
+	"local_trableshoot/internal/format"
 	"local_trableshoot/internal/hostname"
 	"local_trableshoot/internal/kernel"
 	"local_trableshoot/internal/mem"
@@ -25,6 +26,8 @@ type LinuxDiagnostic struct{}
 // Добавляем список процессов&памяти в HTM
 
 func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
+	format.WriteHTMLHeader(file)
+
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
 	proc.ShowAllCpu(file)
@@ -49,9 +52,13 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	disk.GetDisksInfo(file)
 	kernel.GetErrorKernel(file)
 	kernel.GetKernelAndModules(file)
+
+	format.WriteHTMLFooter(file)
 }
 
 func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
+	format.WriteHTMLHeader(file)
+
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
 	proc.ShowAllCpu(file)
@@ -66,6 +73,8 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	mem.AddProcessesByMem(file)
 	top.Get_atop_processes_lists(file)
 	kernel.GetErrorKernel(file)
+
+	format.WriteHTMLFooter(file)
 }
 
 // top network traffic used process

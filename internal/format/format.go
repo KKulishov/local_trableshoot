@@ -22,3 +22,23 @@ func ExecuteCommand(command string, args ...string) string {
 	}
 	return string(output)
 }
+
+// WriteHTMLHeader записывает начальную часть HTML-документа.
+func WriteHTMLHeader(file *os.File) {
+	file.WriteString(`<!DOCTYPE html>
+		<html lang="en">
+		<head>
+		    <meta charset="UTF-8">
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		    <title>Local troubleshoot</title>
+		</head>
+		<body>
+		`)
+}
+
+// WriteHTMLFooter закрывает HTML-документ.
+func WriteHTMLFooter(file *os.File) {
+	file.WriteString(`</body>
+</html>
+`)
+}
