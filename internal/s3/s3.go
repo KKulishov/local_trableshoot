@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"local_trableshoot/internal/hostname"
@@ -83,12 +84,23 @@ func UploadToS3(cfg *S3Config, hostName, filePath string) error {
 		}
 	}
 
-	// Создаем путь на S3 с учетом имени хоста
+	// Читаем содержимое файла в байтовый массив
+	fileData, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("не удалось прочитать файл: %v", err)
+	}
+
+	// Определяем путь и имя файла на S3
 	objectName := filepath.Join(hostName, filepath.Base(filePath))
-	contentType := "text/plain"
+	contentType := "text/html; charset=utf-8"
 
 	// Загружаем файл на S3
-	info, err := minioClient.FPutObject(ctx, cfg.BucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+	info, err := minioClient.PutObject(ctx, cfg.BucketName, objectName,
+		bytes.NewReader(fileData), int64(len(fileData)),
+		minio.PutObjectOptions{
+			ContentType:  contentType,
+			UserMetadata: map[string]string{"charset": "UTF-8"},
+		})
 	if err != nil {
 		return fmt.Errorf("не удалось загрузить файл в S3: %v", err)
 	}
@@ -96,6 +108,70 @@ func UploadToS3(cfg *S3Config, hostName, filePath string) error {
 	fmt.Printf("Файл успешно загружен в S3. Path: %s, ETag: %s, VersionID: %s\n", objectName, info.ETag, info.VersionID)
 	return nil
 }
+
+/*
+// Функция для загрузки файла в S3 с использованием MinIO
+func UploadToS3(cfg *S3Config, hostName, filePath string) error {
+	// Создаем клиента MinIO
+	minioClient, err := minio.New(cfg.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.AccessKeyID, cfg.SecretAccessKey, ""),
+		Secure: cfg.UseSSL,
+	})
+	if err != nil {
+		return fmt.Errorf("не удалось создать клиента MinIO: %v", err)
+	}
+
+	// Создаем контекст с таймаутом для операций S3
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Проверяем, существует ли указанный bucket, и создаем его, если его нет
+	exists, err := minioClient.BucketExists(ctx, cfg.BucketName)
+	if err != nil {
+		return fmt.Errorf("не удалось проверить существование bucket: %v", err)
+	}
+	if !exists {
+		err = minioClient.MakeBucket(ctx, cfg.BucketName, minio.MakeBucketOptions{Region: "us-east-1"})
+		if err != nil {
+			return fmt.Errorf("не удалось создать bucket: %v", err)
+		}
+	}
+
+	// Читаем содержимое файла в байтовый массив
+	fileData, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("не удалось прочитать файл: %v", err)
+	}
+
+	// Создаем путь на S3 с учетом имени хоста
+	objectName := filepath.Join(hostName, filepath.Base(filePath))
+	contentType := "text/html; charset=utf-8"
+	//contentType := "text/plain"
+
+	// Загружаем файл на S3
+	info, err := minioClient.PutObject(ctx, cfg.BucketName, objectName,
+		bytes.NewReader(fileData), int64(len(fileData)),
+		minio.PutObjectOptions{
+			ContentType:  contentType,
+			UserMetadata: map[string]string{"charset": "UTF-8"},
+		})
+	if err != nil {
+		return fmt.Errorf("не удалось загрузить файл в S3: %v", err)
+	}
+
+		info, err := minioClient.FPutObject(ctx, cfg.BucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType,
+			ContentEncoding: "UTF-8",
+			UserMetadata:    map[string]string{"charset": "UTF-8"},
+		})
+		if err != nil {
+			return fmt.Errorf("не удалось загрузить файл в S3: %v", err)
+		}
+
+
+	fmt.Printf("Файл успешно загружен в S3. Path: %s, ETag: %s, VersionID: %s\n", objectName, info.ETag, info.VersionID)
+	return nil
+}
+*/
 
 // DeleteOldFiles оставляет последние `retainCount` файлов в папке `hostPath`
 func DeleteOldFiles(cfg *S3Config, hostPath string, retainCount int) error {
