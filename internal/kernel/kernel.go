@@ -7,6 +7,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func GetKernelAndModules(file *os.File) {
@@ -32,14 +33,38 @@ func GetKernelAndModules(file *os.File) {
 	//format.WritePreformatted(file, lastMessagesOutput+lastMessages)
 }
 
+func parseLogDate(logLine string) (time.Time, error) {
+	// Define a layout matching the log format
+	const layout = "Jan 2 15:04:05"
+	now := time.Now()
+	year := now.Year()
+
+	// Extract the date substring from the log line
+	dateStr := logLine[:15] // "Nov 15 08:16:45"
+	logTime, err := time.Parse(layout, dateStr)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	// Assuming the log is from the current year
+	// Adjust if the current time was before the log time to handle year roll-over
+	logTime = logTime.AddDate(year-logTime.Year(), 0, 0)
+	if logTime.After(now) {
+		logTime = logTime.AddDate(-1, 0, 0)
+	}
+
+	return logTime, nil
+}
+
 func GetErrorKernel(file *os.File) {
 	// Заголовок раздела в HTML
 	format.WriteHeaderWithID(file, "Kernel Log Errors", "Error")
 
 	// Объявляем регулярное выражение для поиска ключевых слов ошибок
 	errorRegex := regexp.MustCompile(`(?i)(error|critical|fail|panic|warn)`)
+	yesterday := time.Now().Add(-24 * time.Hour)
 
-	// Функция для обработки лога и записи ошибок в файл
+	// Функция для обработки лога и записи ошибок в файл за последние сутки
 	processLogFile := func(filePath string) {
 		logFile, err := os.Open(filePath)
 		if err != nil {
@@ -48,11 +73,20 @@ func GetErrorKernel(file *os.File) {
 		}
 		defer logFile.Close()
 
-		fmt.Fprintf(file, "<h3>Ошибки в %s:</h3>\n<pre>", filePath)
+		fmt.Fprintf(file, "<h3>Ошибки за последнии 24ч в %s:</h3>\n<pre>", filePath)
 		scanner := bufio.NewScanner(logFile)
 		for scanner.Scan() {
 			line := scanner.Text()
-			if errorRegex.MatchString(line) {
+
+			// Extract the date from the log
+			logTime, err := parseLogDate(line)
+			if err != nil {
+				fmt.Fprintf(file, "<p>Ошибка парсинга строки: %s: %v</p>\n", line, err)
+				continue
+			}
+
+			// Filter messages from the last 24 hours
+			if logTime.After(yesterday) && errorRegex.MatchString(line) {
 				fmt.Fprintln(file, line)
 			}
 		}
@@ -79,7 +113,7 @@ func GetErrorKernel(file *os.File) {
 		fmt.Fprintf(file, "<p>Ошибка при чтении dmesg: %v</p>\n", err)
 	}
 
-	// Обработка файлов /var/log/kernel.log и /var/log/messages
+	// Обработка файлов /var/log/kern.log, /var/log/kernel.log, /var/log/messages
 	processLogFile("/var/log/kern.log")
 	processLogFile("/var/log/kernel.log")
 	processLogFile("/var/log/messages")
