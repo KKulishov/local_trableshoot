@@ -34,7 +34,7 @@ func GetKernelAndModules(file *os.File) {
 
 func GetErrorKernel(file *os.File) {
 	// Заголовок раздела в HTML
-	format.WriteHeader(file, "Kernel Log Errors")
+	format.WriteHeaderWithID(file, "Kernel Log Errors", "Error")
 
 	// Объявляем регулярное выражение для поиска ключевых слов ошибок
 	errorRegex := regexp.MustCompile(`(?i)(error|critical|fail|panic|warn)`)

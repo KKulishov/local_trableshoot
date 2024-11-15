@@ -106,7 +106,7 @@ func parseIOTopOutput(output string) []ProcessInfo {
 }
 
 func saveToHTML(file *os.File, processes []ProcessInfo) error {
-	_, err := file.WriteString("<html><body><h1>Disk Utilization Report</h1><table border='1'>")
+	_, err := file.WriteString("<html><body><h3 id=\"Disck\">Disk Utilization Report</h3><table border='1'>")
 	if err != nil {
 		return err
 	}

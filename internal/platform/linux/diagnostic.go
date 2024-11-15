@@ -28,6 +28,7 @@ type LinuxDiagnostic struct{}
 
 func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	format.WriteHTMLHeader(file)
+	format.ListAnchorReport(file)
 
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
@@ -61,6 +62,7 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 
 func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	format.WriteHTMLHeader(file)
+	format.ListAnchorReport(file)
 
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)

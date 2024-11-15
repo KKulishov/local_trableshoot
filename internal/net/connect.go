@@ -11,7 +11,7 @@ import (
 
 func GetConnections(file *os.File) {
 	// TCP sockets
-	format.WriteHeader(file, "Listened TCP sockets")
+	format.WriteHeaderWithID(file, "Listened TCP sockets", "Network")
 	tcpOutput := format.ExecuteCommand("ss", "-nlpt")
 	format.WritePreformatted(file, tcpOutput)
 

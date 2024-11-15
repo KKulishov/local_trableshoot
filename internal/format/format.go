@@ -10,6 +10,14 @@ func WriteHeader(file *os.File, header string) {
 	file.WriteString(fmt.Sprintf("<h3>%s</h3>\n", header))
 }
 
+func WriteHeaderWithID(file *os.File, header string, id string) {
+	if id != "" {
+		file.WriteString(fmt.Sprintf("<h3 id=\"%s\">%s</h3>\n", id, header))
+	} else {
+		file.WriteString(fmt.Sprintf("<h3>%s</h3>\n", header))
+	}
+}
+
 func WritePreformatted(file *os.File, content string) {
 	file.WriteString(fmt.Sprintf("<div><pre>%s</pre></div>\n", content))
 }
@@ -41,4 +49,18 @@ func WriteHTMLFooter(file *os.File) {
 	file.WriteString(`</body>
 </html>
 `)
+}
+
+func ListAnchorReport(file *os.File) {
+	file.WriteString(`<h3>Menu</h1>
+	<nav>
+		<ul>
+			<li><a href="#Atop">Atop info</a></li>
+			<li><a href="#Process">Process run system</a></li>
+			<li><a href="#Network">Network info system</a></li>
+			<li><a href="#Disck">Disck info system</a></li>
+			<li><a href="#Error">Error log system</a></li>
+		</ul>
+	</nav>
+		`)
 }

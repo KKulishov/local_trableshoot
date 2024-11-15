@@ -10,7 +10,7 @@ import (
 
 func AddProcessesByCPU(file *os.File) {
 	// Заголовок секции
-	fmt.Fprintln(file, "<h3>Processes by CPU</h3>")
+	fmt.Fprintln(file, "<h3 id=\"Process\">Processes by CPU</h3>")
 	fmt.Fprintln(file, "<div><pre>")
 
 	// Выполнение команды для получения списка процессов по CPU

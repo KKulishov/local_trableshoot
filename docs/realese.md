@@ -5,6 +5,7 @@
 - add: Io top disck utilization for 5 sec. 
 - add: upload s3 report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html && /var/log/full_report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html. 
 - add: Load Average system 
+- add: Simple navigation menu
 
 ## v0.3.9
 

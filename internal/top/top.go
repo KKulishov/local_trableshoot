@@ -61,7 +61,7 @@ func GetSummary(file *os.File) {
 		fmt.Fprintln(file, "<div><pre>Убедитесь, что atop установлена в системе.</pre></div>")
 	} else {
 		// Выполнение команды для вывода информации о CPU с помощью atop
-		format.WriteHeader(file, "Show atop process")
+		format.WriteHeaderWithID(file, "Show atop process", "Atop")
 		cpuCmd := exec.Command("sh", "-c", "atop -L 180 -a 1 1 | sed -rn '1,/^\\s+/ p' | tail -n +3 | head -n -1")
 		cpuOutput, err := cpuCmd.CombinedOutput()
 		if err != nil {
