@@ -26,10 +26,10 @@ func GetKernelAndModules(file *os.File) {
 	format.WritePreformatted(file, modulesOutput)
 
 	// Last messages
-	format.WriteHeader(file, "Last messages")
-	lastMessagesOutput := format.ExecuteCommand("dmesg")
-	lastMessages := format.ExecuteCommand("tail", "-n", "50")
-	format.WritePreformatted(file, lastMessagesOutput+lastMessages)
+	//format.WriteHeader(file, "Last messages")
+	//lastMessagesOutput := format.ExecuteCommand("dmesg")
+	//lastMessages := format.ExecuteCommand("tail", "-n", "50")
+	//format.WritePreformatted(file, lastMessagesOutput+lastMessages)
 }
 
 func GetErrorKernel(file *os.File) {

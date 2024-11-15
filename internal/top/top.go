@@ -43,8 +43,14 @@ func Get_atop_processes_lists(file *os.File) {
 		writeSection("Atop processes by MEM, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -G", logFile, start, end))
 		// Запись информации о процессах по IOPS
 		writeSection("Atop processes by IOPS, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -D", logFile, start, end))
-		// Запись информации о процессах по NET
-		writeSection("Atop processes by NET, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -N", logFile, start, end))
+		// Проверка на наличие утилиты netatop
+		if !isCommandAvailable("netatop") {
+			fmt.Fprintln(file, "<h3>Утилита netatop не обнаружена</h3>")
+			fmt.Fprintln(file, "<div><pre>Убедитесь, что netatop установлена в системе.</pre></div>")
+		} else {
+			// Запись информации о процессах по NET
+			writeSection("Atop processes by NET, in the last 15 minutes", fmt.Sprintf("atopsar -r \"%s\" -b %s -e %s -N", logFile, start, end))
+		}
 	}
 }
 

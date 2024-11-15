@@ -11,6 +11,7 @@ import (
 	"local_trableshoot/internal/format"
 	"local_trableshoot/internal/hostname"
 	"local_trableshoot/internal/kernel"
+	"local_trableshoot/internal/load"
 	"local_trableshoot/internal/mem"
 	"local_trableshoot/internal/net"
 	"local_trableshoot/internal/proc"
@@ -31,6 +32,7 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
 	proc.ShowAllCpu(file)
+	load.GetLA(file)
 	mem.ShowMem(file)
 	top.GetSummary(file)
 	top.Get_atop_processes_lists(file)
@@ -49,6 +51,7 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	if *flags.CheckDns {
 		net.CheckDnS(file)
 	}
+	disk.AppDiskUtilization(file)
 	disk.GetDisksInfo(file)
 	kernel.GetErrorKernel(file)
 	kernel.GetKernelAndModules(file)
@@ -62,6 +65,7 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	hostname.GetVersionApp(file)
 	hostname.GetHostName(file)
 	proc.ShowAllCpu(file)
+	load.GetLA(file)
 	mem.ShowMem(file)
 	if *flags.ContainerFlag == "docker" {
 		containers.GetDockerStatCpu(file)
