@@ -1,4 +1,10 @@
-- Now version v0.3.9
+- Now version v0.4.0
+
+## v0.4.0
+
+- add: Io top disck utilization for 5 sec. 
+- add: upload s3 report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html && /var/log/full_report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html. 
+- add: Load Average system 
 
 ## v0.3.9
 
