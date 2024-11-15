@@ -75,10 +75,18 @@ func parseIOTopOutput(output string) []ProcessInfo {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.HasPrefix(line, "    TID ") || strings.HasPrefix(line, "Total DISK READ:") || strings.HasPrefix(line, "Current DISK READ:") {
+
+		if strings.HasPrefix(line, "    TID ") ||
+			strings.HasPrefix(line, "Total DISK READ:") ||
+			strings.HasPrefix(line, "Actual DISK READ:") {
 			// Пропускаем строки заголовков или итогов
 			continue
 		}
+
+		// Удаление `b'` и конечного `'` символа, если они присутствуют
+		line = strings.TrimPrefix(line, "b'")
+		line = strings.TrimSuffix(line, "'")
+
 		fields := strings.Fields(line)
 		if len(fields) < 10 {
 			continue
