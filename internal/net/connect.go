@@ -6,12 +6,15 @@ import (
 	"local_trableshoot/internal/format"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
+
+	"github.com/shirou/gopsutil/net"
 )
 
 func GetConnections(file *os.File) {
 	// TCP sockets
-	format.WriteHeaderWithID(file, "Listened TCP sockets", "Network")
+	format.WriteHeader(file, "Listened TCP sockets")
 	tcpOutput := format.ExecuteCommand("ss", "-nlpt")
 	format.WritePreformatted(file, tcpOutput)
 
@@ -94,5 +97,56 @@ func GetTrableConnections(file *os.File) {
 		fmt.Fprintln(file, html.EscapeString(string(outputSynRECEIVED)))
 	}
 
+	fmt.Fprintln(file, "</pre></div>")
+}
+
+// getNetStatSummary возвращает сетевую статистику (аналог `netstat`)
+func getNetStatSummary(protocol string) (map[string]int, error) {
+	// Получаем список всех сетевых соединений
+	conns, err := net.Connections(protocol)
+	if err != nil {
+		return nil, err
+	}
+
+	// Словарь для хранения статистики по состояниям
+	stateCount := make(map[string]int)
+
+	// Подсчитываем количество каждого состояния
+	for _, conn := range conns {
+		state := strings.ToUpper(conn.Status) // Состояние соединения (например, TIME_WAIT, ESTABLISHED)
+		stateCount[state]++
+	}
+
+	return stateCount, nil
+}
+
+func PrintNetStat(file *os.File, protocol string) {
+	stats, err := getNetStatSummary(protocol)
+	if err != nil {
+		fmt.Printf("Error retrieving %s stats: %v\n", protocol, err)
+		return
+	}
+
+	// Сортируем состояния по количеству соединений
+	type kv struct {
+		Key   string
+		Value int
+	}
+	var sortedStats []kv
+	for k, v := range stats {
+		sortedStats = append(sortedStats, kv{k, v})
+	}
+	sort.Slice(sortedStats, func(i, j int) bool {
+		return sortedStats[i].Value < sortedStats[j].Value
+	})
+
+	// Добавляем заголовок для секции SYN-SENT
+	fmt.Fprintf(file, "<h3 id=\"Network\">Общая сетевая статистика по %s</h3>", protocol)
+	fmt.Fprintln(file, "<div><pre>")
+	// Выводим статистику
+	for _, kv := range sortedStats {
+		//fmt.Printf("%d %s\n", kv.Value, kv.Key)
+		fmt.Fprintln(file, kv.Value, kv.Key)
+	}
 	fmt.Fprintln(file, "</pre></div>")
 }

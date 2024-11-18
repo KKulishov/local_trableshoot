@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+var (
+	// Тайминг, который теперь вынесен в константу
+	timeParsingHoursAgo = -1 * time.Hour
+)
+
 func GetKernelAndModules(file *os.File) {
 	// Current
 	format.WriteHeader(file, "Current")
@@ -62,9 +67,11 @@ func GetErrorKernel(file *os.File) {
 
 	// Объявляем регулярное выражение для поиска ключевых слов ошибок
 	errorRegex := regexp.MustCompile(`(?i)(error|critical|fail|panic|warn)`)
-	yesterday := time.Now().Add(-24 * time.Hour)
 
-	// Функция для обработки лога и записи ошибок в файл за последние сутки
+	// Время два часа назад
+	cutoffTime := time.Now().Add(timeParsingHoursAgo)
+
+	// Функция для обработки лога и записи ошибок в файл за последние указанное время
 	processLogFile := func(filePath string) {
 		logFile, err := os.Open(filePath)
 		if err != nil {
@@ -73,7 +80,7 @@ func GetErrorKernel(file *os.File) {
 		}
 		defer logFile.Close()
 
-		fmt.Fprintf(file, "<h3>Ошибки за последнии 24ч в %s:</h3>\n<pre>", filePath)
+		fmt.Fprintf(file, "<h3>Ошибки за последнии %s часа в %s:</h3>\n<pre>", timeParsingHoursAgo, filePath)
 		scanner := bufio.NewScanner(logFile)
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -85,8 +92,8 @@ func GetErrorKernel(file *os.File) {
 				continue
 			}
 
-			// Filter messages from the last 24 hours
-			if logTime.After(yesterday) && errorRegex.MatchString(line) {
+			// Filter messages from the last timeParsingHoursAgo
+			if logTime.After(cutoffTime) && errorRegex.MatchString(line) {
 				fmt.Fprintln(file, line)
 			}
 		}

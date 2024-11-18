@@ -36,6 +36,7 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 | count-rotate   | COUNT_ROTATE       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
 | count-rotate-s3 | COUNT_ROTATE_S3   | int     | 30      | Apllication save report file in s3 . The number of report files is no more than 30 pieces, all older files, will be deleted.  |
 |report-dir        | REPORT_DIR        | string  | "/var/log"   | Path to the save report directory  |
+|atop-report        | ATOP_REPORT        | Bool  | false   | if you need report atopsar top utilization CPU/MEM/IO/NET in the last 15 minutes  |
 |version           |                   | string  | unknown   | Show version build  |
 
 
@@ -54,7 +55,7 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.3.9"
+version_trableshoot="v0.4.1"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 

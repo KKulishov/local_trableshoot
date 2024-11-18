@@ -1,4 +1,12 @@
-- Now version v0.4.0
+- Now version v0.4.1
+
+## v0.4.1
+
+-- add: args --atop-report if you need report atopsar top utilization CPU/MEM/IO/NET in the last 15 minutes
+-- add: args --proxyS3Host if you use s3 proxy, by analogy https://github.com/nginxinc/nginx-s3-gateway
+-- add: General network statistics 
+-- changes: I also reworked the check-dns logic, now tracing to the host's DNS only occurs if the connection via udp port 53 does not reach the host.
+-- changes: reduced the search depth in the 1 hour slice for errors in logs (/var/log/messages, /var/log/kernel.log, /var/log/kern.log)
 
 ## v0.4.0
 

@@ -84,7 +84,7 @@ func CheckDnS(file *os.File) {
 	} else {
 		// Проверяем каждый сервер на доступность и выполняем tracepath
 		for _, server := range servers {
-			if checkDNSServerAvailability(file, server) {
+			if !checkDNSServerAvailability(file, server) {
 				tracepathToDNSServer(file, server)
 			}
 		}

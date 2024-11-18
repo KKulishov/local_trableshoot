@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"local_trableshoot/internal/flags"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -23,6 +25,10 @@ type S3Config struct {
 	UseSSL          bool
 	BucketName      string
 }
+
+var (
+	proxy_S3_Host = *flags.ProxyS3Host
+)
 
 // Функция для чтения конфигурации из файла
 func LoadConfig(filepath string) (*S3Config, error) {
@@ -105,7 +111,11 @@ func UploadToS3(cfg *S3Config, hostName, filePath string) error {
 		return fmt.Errorf("не удалось загрузить файл в S3: %v", err)
 	}
 
-	fmt.Printf("Файл успешно загружен в S3. Path: %s, ETag: %s, VersionID: %s\n", objectName, info.ETag, info.VersionID)
+	if proxy_S3_Host == "" {
+		fmt.Printf("Файл успешно загружен в S3. Path: %s, ETag: %s, VersionID: %s\n", objectName, info.ETag, info.VersionID)
+	} else {
+		fmt.Printf("Файл успешно загружен в S3. Path: https://%s/%s, ETag: %s, VersionID: %s\n", proxy_S3_Host, objectName, info.ETag, info.VersionID)
+	}
 	return nil
 }
 

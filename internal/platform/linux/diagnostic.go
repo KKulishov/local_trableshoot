@@ -36,16 +36,20 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	load.GetLA(file)
 	mem.ShowMem(file)
 	top.GetSummary(file)
-	top.Get_atop_processes_lists(file)
+	if *flags.AtopReport {
+		top.Get_atop_processes_lists(file)
+	}
 	if *flags.ContainerFlag == "docker" {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
-		containers.GetDockerStatDisk(file)
+		//containers.GetDockerStatDisk(file)
 		containers.GetDockerStatNetwork(file)
 	}
 	proc.AddProcessesByCPU(file)
 	proc.GetProcessesTree(file)
 	mem.AddProcessesByMem(file)
+	net.PrintNetStat(file, "tcp")
+	net.PrintNetStat(file, "udp")
 	net.GetConnections(file)
 	net.GetNetworkStats(file)
 	net.GetTrableConnections(file)
@@ -72,12 +76,16 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	if *flags.ContainerFlag == "docker" {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
-		containers.GetDockerStatDisk(file)
+		//containers.GetDockerStatDisk(file)
 		containers.GetDockerStatNetwork(file)
 	}
 	proc.AddProcessesByCPU(file)
 	mem.AddProcessesByMem(file)
-	top.Get_atop_processes_lists(file)
+	if *flags.AtopReport {
+		top.Get_atop_processes_lists(file)
+	}
+	net.PrintNetStat(file, "tcp")
+	net.PrintNetStat(file, "udp")
 	kernel.GetErrorKernel(file)
 
 	format.WriteHTMLFooter(file)
