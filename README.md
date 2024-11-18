@@ -55,7 +55,7 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.4.1"
+version_trableshoot="v0.4.3"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 
