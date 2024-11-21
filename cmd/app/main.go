@@ -48,13 +48,13 @@ func main() {
 	diag.BaseDiagnostics(filequick)
 	diag.FullDiagnostics(file)
 
-	// Загружаем конфигурацию из файла для s3
-	s3.Send_report_file(fileName, *flags.CountRotate_S3)
-	s3.Send_report_file(fileNamequick, *flags.CountRotate_S3)
-
 	// Очистка старых отчетов
 	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
 	rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
 	fmt.Println("Отчет о процессах создан:", fileNamequick)
 	fmt.Println("Отчет о процессах создан:", fileName)
+
+	// Загружаем конфигурацию из файла для s3
+	s3.Send_report_file(fileName, *flags.CountRotate_S3)
+	s3.Send_report_file(fileNamequick, *flags.CountRotate_S3)
 }

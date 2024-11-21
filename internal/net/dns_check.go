@@ -4,11 +4,15 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"local_trableshoot/internal/flags"
 	"net"
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
+
+	"github.com/miekg/dns"
 )
 
 // Функция для получения списка DNS-серверов из /etc/resolv.conf
@@ -38,57 +42,98 @@ func getDNSServers() ([]string, error) {
 	return servers, nil
 }
 
-// Функция для проверки доступности DNS-сервера на порту 53
-func checkDNSServerAvailability(file *os.File, server string) bool {
-	conn, err := net.DialTimeout("udp", net.JoinHostPort(server, "53"), 2*time.Second)
-	if err != nil {
-		fmt.Fprintf(file, "<p>DNS сервер <b>%s</b> не доступен: %v</p>\n", server, err)
-		return false
+// Проверка доступности DNS-сервера на порту 53
+func checkDNSServerAvailability(server string, checkName string) (bool, error) {
+	if checkName == "" {
+		checkName = "ya.ru." // значение по умолчанию для проверки DNS resolve (полностью квалифицированное имя)
+	} else if !strings.HasSuffix(checkName, ".") {
+		checkName += "." // добавляем завершающую точку, если ее нет
 	}
-	defer conn.Close()
-	fmt.Fprintf(file, "<p>DNS сервер <b>%s</b> доступен</p>\n", server)
-	return true
+
+	// Создаем DNS-клиент
+	client := dns.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	// Создаем DNS-запрос
+	msg := new(dns.Msg)
+	msg.SetQuestion(checkName, dns.TypeA) // Запрос на получение A-записи (IPv4) для checkName
+
+	// Отправляем запрос
+	resp, _, err := client.Exchange(msg, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return false, fmt.Errorf("ошибка при обращении к DNS-серверу %s: %v", server, err)
+	}
+
+	// Проверяем, есть ли ответ в секции ответа
+	if len(resp.Answer) == 0 {
+		return false, fmt.Errorf("DNS-сервер %s не вернул ответа", server)
+	}
+
+	return true, nil
 }
 
 // Функция для выполнения tracepath на UDP порту 53
-func tracepathToDNSServer(file *os.File, server string) {
-	fmt.Fprintf(file, "<h3>Трассировка до DNS сервера %s:</h3>\n<pre>", server)
-
-	// Создаем контекст с таймаутом
+func tracepathToDNSServer(server string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 14*time.Second)
 	defer cancel()
 
-	// Выполняем команду с учетом контекста
 	cmd := exec.CommandContext(ctx, "tracepath", "-p53", server)
 	output, err := cmd.CombinedOutput()
 
 	if ctx.Err() == context.DeadlineExceeded {
-		fmt.Fprintf(file, "Таймаут для трассировки до сервера %s\n", server)
+		return fmt.Sprintf("Таймаут для трассировки до сервера %s\n", server)
 	} else if err != nil {
-		fmt.Fprintf(file, "Ошибка выполнения tracepath для сервера %s: %v\n", server, err)
-	} else {
-		fmt.Fprintln(file, string(output))
+		return fmt.Sprintf("Ошибка выполнения tracepath для сервера %s: %v\n", server, err)
 	}
-	fmt.Fprintln(file, "</pre>")
+	return string(output)
 }
 
 func CheckDnS(file *os.File) {
-	// Начинаем HTML-отчет
 	fmt.Fprintln(file, "<html><head><title>DNS Check Report</title></head><body>")
 	fmt.Fprintln(file, "<h1>Отчет о проверке DNS-серверов</h1>")
 
-	// Получаем список DNS-серверов
 	servers, err := getDNSServers()
 	if err != nil {
 		fmt.Fprintf(file, "<p>Ошибка получения списка DNS-серверов: %v</p>\n", err)
-	} else {
-		// Проверяем каждый сервер на доступность и выполняем tracepath
-		for _, server := range servers {
-			if !checkDNSServerAvailability(file, server) {
-				tracepathToDNSServer(file, server)
-			}
-		}
+		fmt.Fprintln(file, "</body></html>")
+		return
 	}
-	// Заканчиваем HTML-отчет
+
+	var wg sync.WaitGroup
+	results := make(chan string, len(servers)) // Канал для сбора результатов
+
+	for _, server := range servers {
+		wg.Add(1)
+		go func(server string) {
+			defer wg.Done()
+
+			// Проверяем доступность DNS-сервера
+			available, err := checkDNSServerAvailability(server, *flags.CheckNameDns)
+			if available {
+				results <- fmt.Sprintf("<p>DNS сервер <b>%s</b> доступен</p>\n", server)
+			} else {
+				if err != nil {
+					results <- fmt.Sprintf("<p>DNS сервер <b>%s</b> не доступен: %v</p>\n", server, err)
+				}
+
+				// Выполняем трассировку
+				trace := tracepathToDNSServer(server)
+				results <- fmt.Sprintf("<h3>Трассировка до DNS сервера %s:</h3>\n<pre>%s</pre>", server, trace)
+			}
+		}(server)
+	}
+
+	// Закрытие канала результатов после завершения всех горутин
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// Сбор и запись результатов
+	for result := range results {
+		fmt.Fprintln(file, result)
+	}
+
 	fmt.Fprintln(file, "</body></html>")
 }

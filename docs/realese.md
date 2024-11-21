@@ -1,4 +1,15 @@
-- Now version v0.4.1
+- Now version v0.4.4
+
+## v0.4.4
+
+-- changes: dns check new logic , add library connection [dns](https://github.com/miekg/dns)
+
+add args check-dns-name
+```
+--check-dns-name="domain.com"
+```
+We get a list of /etc/resolv.conf , by nameserver.
+Checking domain name resolution, if it doesn't work, it traces to the unavailable DNS server.  
 
 ## v0.4.3
 
