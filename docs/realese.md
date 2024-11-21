@@ -1,5 +1,25 @@
 - Now version v0.4.4
 
+## v0.4.5
+
+-- add: mapping pid of process by cpu&memory top utilization to name namespace/pods/container 
+-- add: separate argument to start rotation s3 buсket 
+
+if specified with the launch key
+```
+--run-rotate-s3
+``` 
+rotation will occur in the bucket, but the report will not be generated
+
+convenient to put on the cron. for weekly run to clean objects
+
+example cron task (This task will be executed once on Saturday at midnight):
+```
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+0 0 * * 6 root /usr/local/sbin/local_trableshoot --run-rotate-s3
+```
+
 ## v0.4.4
 
 -- changes: dns check new logic , add library connection [dns](https://github.com/miekg/dns)

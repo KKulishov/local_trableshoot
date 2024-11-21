@@ -5,6 +5,8 @@
 package linux
 
 import (
+	"fmt"
+	"local_trableshoot/internal/cgroups"
 	"local_trableshoot/internal/containers"
 	"local_trableshoot/internal/disk"
 	"local_trableshoot/internal/flags"
@@ -26,6 +28,8 @@ type LinuxDiagnostic struct{}
 //var wg sync.WaitGroup
 // Добавляем список процессов&памяти в HTM
 
+var dir_kubelet string = "/var/log/containers"
+
 func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	format.WriteHTMLHeader(file)
 	format.ListAnchorReport(file)
@@ -45,9 +49,11 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 		//containers.GetDockerStatDisk(file)
 		containers.GetDockerStatNetwork(file)
 	}
-	proc.AddProcessesByCPU(file)
+
+	getProcess_to_ns(file, dir_kubelet)
+	getMem_to_ns(file, dir_kubelet)
+
 	proc.GetProcessesTree(file)
-	mem.AddProcessesByMem(file)
 	net.PrintNetStat(file, "tcp")
 	net.PrintNetStat(file, "udp")
 	net.GetConnections(file)
@@ -79,8 +85,8 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 		//containers.GetDockerStatDisk(file)
 		containers.GetDockerStatNetwork(file)
 	}
-	proc.AddProcessesByCPU(file)
-	mem.AddProcessesByMem(file)
+	getProcess_to_ns(file, dir_kubelet)
+	getMem_to_ns(file, dir_kubelet)
 	if *flags.AtopReport {
 		top.Get_atop_processes_lists(file)
 	}
@@ -89,6 +95,47 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	kernel.GetErrorKernel(file)
 
 	format.WriteHTMLFooter(file)
+}
+
+func getProcess_to_ns(file *os.File, kuber_dir string) {
+	pids, err := proc.AddProcessesByCPU(file)
+	if err != nil {
+		fmt.Println("Error getting processes by CPU:", err)
+		return
+	}
+
+	_, err_dir_kubelet := os.Stat(kuber_dir)
+
+	if err_dir_kubelet == nil {
+		// Обрабатываем полученные PID
+		containerInfos, err := cgroups.ProcessPIDs(pids)
+		if err != nil {
+			//fmt.Println("Error processing PIDs:", err)
+			return
+		}
+		// Выводим информацию о контейнерах
+		proc.SaveContainersToHTML(file, containerInfos)
+	}
+}
+
+func getMem_to_ns(file *os.File, kuber_dir string) {
+	pids, err := mem.AddProcessesByMem(file)
+	if err != nil {
+		fmt.Println("Error getting processes by MEM:", err)
+		return
+	}
+	_, err_dir_kubelet := os.Stat(kuber_dir)
+	if err_dir_kubelet == nil {
+		// Обрабатываем полученные PID
+		containerInfos, err := cgroups.ProcessPIDs(pids)
+		if err != nil {
+			//fmt.Println("Error processing PIDs:", err)
+			return
+		}
+		// Выводим информацию о контейнерах
+		mem.SaveContainersToHTML(file, containerInfos)
+	}
+
 }
 
 // top network traffic used process
