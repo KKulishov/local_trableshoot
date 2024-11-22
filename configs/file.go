@@ -18,3 +18,25 @@ func CreateReportFile(filePath string) (*os.File, error) {
 	}
 	return file, nil
 }
+
+func CheckAndCreateDir(path string) error {
+	// Проверка существует ли каталог
+	_, err := os.Stat(path)
+
+	if os.IsNotExist(err) {
+		// Если каталог не существует, создаем его
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			return fmt.Errorf("не удалось создать каталог: %v", err)
+		}
+		fmt.Println("Каталог", path, "успешно создан.")
+	} else if err != nil {
+		// Если произошла ошибка, отличная от "каталог не существует"
+		return fmt.Errorf("ошибка при проверке каталога: %v", err)
+	} else {
+		// Если каталог существует
+		//fmt.Println("Каталог", path, "уже существует.")
+	}
+
+	return nil
+}

@@ -16,6 +16,9 @@ import (
 func main() {
 	var diag platform.Diagnostic
 
+	// проверка существ. каталога для отчетов , если его нет то создаем
+	configs.CheckAndCreateDir(*flags.ReportDir)
+
 	name_host := hostname.HostName()
 	currentTime := time.Now().Format("02.01.2006_15:04:05")
 
@@ -45,16 +48,20 @@ func main() {
 		return
 	}
 
-	diag.BaseDiagnostics(filequick)
-	diag.FullDiagnostics(file)
-
-	// Очистка старых отчетов
-	rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
-	rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
-	fmt.Println("Отчет о процессах создан:", fileNamequick)
-	fmt.Println("Отчет о процессах создан:", fileName)
-
-	// Загружаем конфигурацию из файла для s3
-	s3.Send_report_file(fileName, *flags.CountRotate_S3)
-	s3.Send_report_file(fileNamequick, *flags.CountRotate_S3)
+	// если задан RunRotateS3 аргумент при запуске то идет чистка S3 бакета
+	if *flags.RunRotateS3 {
+		s3.Rotation_s3_bucket(fileName, *flags.CountRotate_S3)
+		s3.Rotation_s3_bucket(fileNamequick, *flags.CountRotate_S3)
+	} else {
+		diag.BaseDiagnostics(filequick)
+		diag.FullDiagnostics(file)
+		// Очистка старых отчетов
+		rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
+		rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
+		fmt.Println("Отчет о процессах создан:", fileNamequick)
+		fmt.Println("Отчет о процессах создан:", fileName)
+		// Загружаем конфигурацию из файла для s3
+		s3.Send_report_file(fileName)
+		s3.Send_report_file(fileNamequick)
+	}
 }

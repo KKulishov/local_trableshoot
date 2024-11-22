@@ -12,6 +12,7 @@ var (
 	CheckDns       = kingpin.Flag("check-dns", "Tracing to DNS specified in /etc/resolv.conf, default set true").Envar("CHECK_DNS").Bool()
 	CheckNameDns   = kingpin.Flag("check-dns-name", "checking the DNS name resolution, default set ya.ru").Envar("CHECK_DNS_NAME").Default("ya.ru.").String()
 	CountRotate    = kingpin.Flag("count-rotate", "Delete old files that are older than the specified number, default set 10").Envar("COUNT_ROTATE").Default("10").Int()
+	RunRotateS3    = kingpin.Flag("run-rotate-s3", "Rotation will run in s3 bucket, but the report will not be generated").Envar("RUN_ROTATE_S3").Bool()
 	CountRotate_S3 = kingpin.Flag("count-rotate-s3", "Delete old files in s3 that are older than the specified number, default set 60").Envar("COUNT_ROTATE_S3").Default("60").Int()
 	ReportDir      = kingpin.Flag("report-dir", "Path to the save report directory").Envar("REPORT_DIR").Default("/var/log").String()
 	ProxyS3Host    = kingpin.Flag("proxyS3Host", "Set s3 proxy host, if you use s3 proxy").Envar("PROXY_S3_HOST").Default("").String()

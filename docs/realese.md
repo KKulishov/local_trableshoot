@@ -9,7 +9,7 @@ if specified with the launch key
 ```
 --run-rotate-s3
 ``` 
-rotation will occur in the bucket, but the report will not be generated
+rotation will run in s3 bucket, but the report will not be generated
 
 convenient to put on the cron. for weekly run to clean objects
 

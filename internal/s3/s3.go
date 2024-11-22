@@ -184,7 +184,7 @@ func UploadToS3(cfg *S3Config, hostName, filePath string) error {
 */
 
 // DeleteOldFiles оставляет последние `retainCount` файлов в папке `hostPath`
-func DeleteOldFiles(cfg *S3Config, hostPath string, retainCount int) error {
+func deleteOldFiles(cfg *S3Config, hostPath string, retainCount int) error {
 	// Список для хранения информации о файлах
 	var objectInfos []minio.ObjectInfo
 
@@ -236,8 +236,24 @@ func DeleteOldFiles(cfg *S3Config, hostPath string, retainCount int) error {
 	return nil
 }
 
+func Rotation_s3_bucket(filePath string, retain int) {
+	configPath := os.Getenv("HOME") + "/.config/report_send_s3"
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		fmt.Printf("Файл конфигурации s3 не найден: %v\n", err)
+	} else {
+		cfg, err := LoadConfig(configPath)
+		if err != nil {
+			fmt.Printf("Ошибка при загрузке конфигурации: %v\n", err)
+			return
+		}
+		// Получаем имя хоста
+		hostName := hostname.HostName()
+		deleteOldFiles(cfg, hostName, retain)
+	}
+}
+
 // отправка отчета в s3
-func Send_report_file(filePath string, retain int) {
+func Send_report_file(filePath string) {
 	// Загружаем конфигурацию из файла для s3
 	configPath := os.Getenv("HOME") + "/.config/report_send_s3"
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -252,7 +268,6 @@ func Send_report_file(filePath string, retain int) {
 		hostName := hostname.HostName()
 		// Загружаем файл в S3 с учетом имени хоста
 		err = UploadToS3(cfg, hostName, filePath)
-		DeleteOldFiles(cfg, hostName, retain)
 		if err != nil {
 			fmt.Printf("Ошибка при загрузке в S3: %v\n", err)
 		}
