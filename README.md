@@ -35,6 +35,7 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 | check-dns      | CHECK_DNS          | Bool    | false   | checking dns availability from /etc/resolv.conf |
 | check-dns-name | CHECK_DNS_NAME     | string  | ya.ru   | checking the DNS name resolution |
 | count-rotate   | COUNT_ROTATE       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
+| run-rotate-s3 | RUN_ROTATE_S3   | Bool     | false      | Rotation will run in s3 bucket, but the report will not be generated  |
 | count-rotate-s3 | COUNT_ROTATE_S3   | int     | 30      | Apllication save report file in s3 . The number of report files is no more than 30 pieces, all older files, will be deleted.  |
 |report-dir        | REPORT_DIR        | string  | "/var/log"   | Path to the save report directory  |
 |atop-report        | ATOP_REPORT        | Bool  | false   | if you need report atopsar top utilization CPU/MEM/IO/NET in the last 15 minutes  |
