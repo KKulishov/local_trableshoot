@@ -10,6 +10,7 @@ import (
 	"local_trableshoot/internal/rotate"
 	"local_trableshoot/internal/s3"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -52,16 +53,63 @@ func main() {
 	if *flags.RunRotateS3 {
 		s3.Rotation_s3_bucket(fileName, *flags.CountRotate_S3)
 		s3.Rotation_s3_bucket(fileNamequick, *flags.CountRotate_S3)
-	} else {
+		return
+	}
+
+	// Используем sync.WaitGroup для синхронизации
+	var wg sync.WaitGroup
+
+	// Каналы для синхронизации зависимостей
+	baseDiagnosticsDone := make(chan struct{})
+	fullDiagnosticsDone := make(chan struct{})
+
+	// Запуск BaseDiagnostics в отдельной горутине
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 		diag.BaseDiagnostics(filequick)
+		close(baseDiagnosticsDone) // Сигнализируем, что BaseDiagnostics завершен
+	}()
+	// Запуск FullDiagnostics в отдельной горутине
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		//<-baseDiagnosticsDone // Ждем завершения BaseDiagnostics
 		diag.FullDiagnostics(file)
-		// Очистка старых отчетов
+		close(fullDiagnosticsDone) // Сигнализируем, что FullDiagnostics завершен
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		<-fullDiagnosticsDone // Ждем завершения BaseDiagnostics
 		rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
 		rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
-		fmt.Println("Отчет о процессах создан:", fileNamequick)
-		fmt.Println("Отчет о процессах создан:", fileName)
-		// Загружаем конфигурацию из файла для s3
-		s3.Send_report_file(fileName)
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		<-baseDiagnosticsDone // Ждем завершения BaseDiagnostics
 		s3.Send_report_file(fileNamequick)
-	}
+		fmt.Println("Отчет о процессах создан:", fileNamequick)
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		<-fullDiagnosticsDone // Ждем завершения BaseDiagnostics
+		s3.Send_report_file(fileName)
+		fmt.Println("Отчет о процессах создан:", fileName)
+	}()
+	// Ожидаем завершения всех горутин
+	wg.Wait()
+	//diag.BaseDiagnostics(filequick)
+	//diag.FullDiagnostics(file)
+	// Очистка старых отчетов
+	//rotate.CleanUpOldReports(*flags.ReportDir, "report_", *flags.CountRotate)
+	//rotate.CleanUpOldReports(*flags.ReportDir, "full_report_", *flags.CountRotate)
+	//fmt.Println("Отчет о процессах создан:", fileNamequick)
+	//fmt.Println("Отчет о процессах создан:", fileName)
+	// Загружаем конфигурацию из файла для s3
+	//s3.Send_report_file(fileName)
+	//s3.Send_report_file(fileNamequick)
+
 }

@@ -47,7 +47,7 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
 		//containers.GetDockerStatDisk(file)
-		containers.GetDockerStatNetwork(file)
+		//containers.GetDockerStatNetwork(file)
 	}
 
 	getProcess_to_ns(file, dir_kubelet)
@@ -83,7 +83,7 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
 		//containers.GetDockerStatDisk(file)
-		containers.GetDockerStatNetwork(file)
+		//containers.GetDockerStatNetwork(file)
 	}
 	getProcess_to_ns(file, dir_kubelet)
 	getMem_to_ns(file, dir_kubelet)

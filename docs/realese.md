@@ -1,4 +1,8 @@
-- Now version v0.4.5
+- Now version v0.4.6
+
+## v0.4.5
+
+-- fix: parallel launch of report unloading in s3 as soon as they are ready
 
 ## v0.4.5
 
