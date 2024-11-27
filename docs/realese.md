@@ -1,4 +1,8 @@
-- Now version v0.4.6
+- Now version v0.4.7
+
+## v0.4.7
+
+-- add: Experimental network analyze. use perf&tcpdump (for ksoftirqd analyzes pid) and upload to s3 
 
 ## v0.4.6
 

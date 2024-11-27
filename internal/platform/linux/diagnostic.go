@@ -97,6 +97,18 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	format.WriteHTMLFooter(file)
 }
 
+func (d *LinuxDiagnostic) NetowrDiagnosics(file *os.File) {
+	format.WriteHTMLHeader(file)
+
+	net.TrablNetBase(file)
+	net.AnalyzeSoftirqdWithPS(file)
+
+	//net.AnalyzeInterrupts(file)
+	//net.PerfAnalyzSoftirqd(file)
+
+	format.WriteHTMLFooter(file)
+}
+
 func getProcess_to_ns(file *os.File, kuber_dir string) {
 	pids, err := proc.AddProcessesByCPU(file)
 	if err != nil {

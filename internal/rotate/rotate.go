@@ -18,10 +18,13 @@ func CleanUpOldReports(dir string, prefix string, retain int) {
 		return
 	}
 
-	// Фильтруем файлы, оставляя только те, что начинаются с prefix и заканчиваются на .html
+	// Фильтруем файлы, оставляя только те, что начинаются с prefix и имеют указанные расширения
 	var reportFiles []fs.DirEntry
 	for _, file := range files {
-		if strings.HasPrefix(file.Name(), prefix) && strings.HasSuffix(file.Name(), ".html") {
+		if strings.HasPrefix(file.Name(), prefix) &&
+			(strings.HasSuffix(file.Name(), ".html") ||
+				strings.HasSuffix(file.Name(), ".data") ||
+				strings.HasSuffix(file.Name(), ".pcap")) {
 			reportFiles = append(reportFiles, file)
 		}
 	}

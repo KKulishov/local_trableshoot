@@ -5,6 +5,7 @@ import (
 	"local_trableshoot/configs"
 	"local_trableshoot/internal/flags"
 	"local_trableshoot/internal/hostname"
+	"local_trableshoot/internal/net"
 	"local_trableshoot/internal/platform"
 	"local_trableshoot/internal/platform/linux"
 	"local_trableshoot/internal/rotate"
@@ -25,8 +26,16 @@ func main() {
 
 	fileNamequick := fmt.Sprintf("%s/report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
 	fileName := fmt.Sprintf("%s/full_report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
+	fileNameNetwork := fmt.Sprintf("%s/network_report_%s_%s.html", *flags.ReportDir, name_host, currentTime)
 	// Создаем файл отчета с помощью функции из configs
 	file, err := configs.CreateReportFile(fileName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+
+	filenetwork, err := configs.CreateReportFile(fileNameNetwork)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -53,8 +62,21 @@ func main() {
 	if *flags.RunRotateS3 {
 		s3.Rotation_s3_bucket(fileName, *flags.CountRotate_S3)
 		s3.Rotation_s3_bucket(fileNamequick, *flags.CountRotate_S3)
+		s3.Rotation_s3_bucket(fileNameNetwork, *flags.CountRotate_S3)
 		return
 	}
+
+	// ToDo add в отдельной горутине
+	if *flags.NetworkAnalyze {
+		diag.NetowrDiagnosics(filenetwork)
+		perfReportPath := net.PerfAnalyzSoftirqd(filenetwork)
+		dumpReportPath := net.TcpDumpAnalyze(filenetwork)
+		fmt.Println("Отчет о процессах создан:", fileNameNetwork)
+		s3.Send_report_file(fileNameNetwork)
+		s3.Send_report_file(perfReportPath)
+		s3.Send_report_file(dumpReportPath)
+	}
+	//
 
 	// Используем sync.WaitGroup для синхронизации
 	var wg sync.WaitGroup
