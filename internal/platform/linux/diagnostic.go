@@ -102,7 +102,7 @@ func (d *LinuxDiagnostic) NetowrDiagnosics(file *os.File) {
 
 	net.TrablNetBase(file)
 	net.AnalyzeSoftirqdWithPS(file)
-
+	net.TcpDumpAnalyze(file)
 	//net.AnalyzeInterrupts(file)
 	//net.PerfAnalyzSoftirqd(file)
 

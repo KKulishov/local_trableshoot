@@ -1,4 +1,8 @@
-- Now version v0.4.7
+- Now version v0.4.8
+
+## v0.4.8
+
+-- fix: save 2 local tcpdump. Don't upload tcpdump in s3. 
 
 ## v0.4.7
 

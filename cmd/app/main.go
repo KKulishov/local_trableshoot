@@ -66,18 +66,6 @@ func main() {
 		return
 	}
 
-	// ToDo add в отдельной горутине
-	if *flags.NetworkAnalyze {
-		diag.NetowrDiagnosics(filenetwork)
-		perfReportPath := net.PerfAnalyzSoftirqd(filenetwork)
-		dumpReportPath := net.TcpDumpAnalyze(filenetwork)
-		fmt.Println("Отчет о процессах создан:", fileNameNetwork)
-		s3.Send_report_file(fileNameNetwork)
-		s3.Send_report_file(perfReportPath)
-		s3.Send_report_file(dumpReportPath)
-	}
-	//
-
 	// Используем sync.WaitGroup для синхронизации
 	var wg sync.WaitGroup
 
@@ -85,6 +73,19 @@ func main() {
 	baseDiagnosticsDone := make(chan struct{})
 	fullDiagnosticsDone := make(chan struct{})
 
+	if *flags.NetworkAnalyze {
+		netowrDiagnosicsDone := make(chan struct{})
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			diag.NetowrDiagnosics(filenetwork)
+			perfReportPath := net.PerfAnalyzSoftirqd(filenetwork)
+			s3.Send_report_file(fileNameNetwork)
+			s3.Send_report_file(perfReportPath)
+			fmt.Println("Отчет о процессах создан:", fileNameNetwork)
+			close(netowrDiagnosicsDone) // Сигнализируем, что BaseDiagnostics завершен
+		}()
+	}
 	// Запуск BaseDiagnostics в отдельной горутине
 	wg.Add(1)
 	go func() {

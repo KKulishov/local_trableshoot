@@ -198,7 +198,7 @@ func TcpDumpAnalyze(file *os.File) string {
 	fmt.Fprintln(file, "Фильтрация по протоколу::  tcpdump -r ", dump_report, " tcp")
 	fmt.Fprintln(file, "<p>Анализ завершен.</p>")
 
-	rotate.CleanUpOldReports(*flags.ReportDir, "tcpdump_", *flags.CountRotate)
+	rotate.CleanUpOldReports(*flags.ReportDir, "tcpdump_", 2)
 
 	return dump_report
 }
