@@ -1,4 +1,8 @@
-- Now version v0.4.8
+- Now version v0.4.9
+
+## v0.4.9
+
+-- add:  performance test cpu for simple report. 
 
 ## v0.4.8
 

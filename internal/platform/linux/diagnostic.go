@@ -16,6 +16,7 @@ import (
 	"local_trableshoot/internal/load"
 	"local_trableshoot/internal/mem"
 	"local_trableshoot/internal/net"
+	"local_trableshoot/internal/perfomance"
 	"local_trableshoot/internal/proc"
 	"local_trableshoot/internal/top"
 	"os"
@@ -79,6 +80,7 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	proc.ShowAllCpu(file)
 	load.GetLA(file)
 	mem.ShowMem(file)
+	perfomance.RunCpuResults(file)
 	if *flags.ContainerFlag == "docker" {
 		containers.GetDockerStatCpu(file)
 		containers.GetDockerStatMem(file)
@@ -151,8 +153,6 @@ func getMem_to_ns(file *os.File, kuber_dir string) {
 }
 
 // top network traffic used process
-// tcpdump
-// arp
 // tracert до не стабильнго соединения
 // ToDo add lsof
 // ToDo add ping& traceroute
