@@ -18,6 +18,7 @@ var (
 	ProxyS3Host    = kingpin.Flag("proxyS3Host", "Set s3 proxy host, if you use s3 proxy").Envar("PROXY_S3_HOST").Default("").String()
 	AtopReport     = kingpin.Flag("atop-report", "include in the report from the information atop").Envar("ATOP_REPORT").Bool()
 	NetworkAnalyze = kingpin.Flag("network-analyze", "Experimental. network analyze. use perf&tcpdump").Envar("NETWORK_ANALYZE").Bool()
+	Perfomance     = kingpin.Flag("perfomance", "Run math analyz for perfomance cpu").Envar("PERFOMANCE").Bool()
 )
 
 func init() {

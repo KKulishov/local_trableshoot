@@ -65,3 +65,23 @@ func RunCpuResults(file *os.File) {
 	fmt.Fprintln(file, "</pre></div>")
 
 }
+
+func RunCpuResultsSdout() {
+	// Устанавливаем максимальный приоритет (если есть права)
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		err := setHighPriority()
+		if err != nil {
+			fmt.Println("Не удалось установить высокий приоритет:", err)
+		} else {
+			fmt.Println("Высокий приоритет установлен.")
+		}
+	}
+
+	// Выполняем вычисления
+	opsCpu, timeOps := heavyMathOperations()
+
+	fmt.Println(`Выполняет расчет, который включает в себя квадратный корень, логарифм и синус для каждого числа от 1 до миллиона`)
+	fmt.Printf("Результат вычислений: %.5f\n", opsCpu)
+	fmt.Printf("Время выполнения: %s\n", timeOps)
+
+}

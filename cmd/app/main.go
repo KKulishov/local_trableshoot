@@ -6,6 +6,7 @@ import (
 	"local_trableshoot/internal/flags"
 	"local_trableshoot/internal/hostname"
 	"local_trableshoot/internal/net"
+	"local_trableshoot/internal/perfomance"
 	"local_trableshoot/internal/platform"
 	"local_trableshoot/internal/platform/linux"
 	"local_trableshoot/internal/rotate"
@@ -63,6 +64,10 @@ func main() {
 		s3.Rotation_s3_bucket(fileName, *flags.CountRotate_S3)
 		s3.Rotation_s3_bucket(fileNamequick, *flags.CountRotate_S3)
 		s3.Rotation_s3_bucket(fileNameNetwork, *flags.CountRotate_S3)
+		return
+	}
+	if *flags.Perfomance {
+		perfomance.RunCpuResultsSdout()
 		return
 	}
 
