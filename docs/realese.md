@@ -1,4 +1,8 @@
-- Now version v0.4.9
+- Now version v0.5
+
+## v0.5
+
+-- fix: if you need only run perfomance for cpu 
 
 ## v0.4.9
 
