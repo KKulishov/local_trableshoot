@@ -8,6 +8,7 @@ the file contains a data report:
  - top 10 containers used cpu/mem/disk/net (for now docker)
  - process top cpu and process tree 
  - process top mem
+ - process top used swap
  - tcp/udp/sockets connect 
  - connecting ip 
  - routes/Neighbours/Resolver
@@ -58,7 +59,7 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.5"
+version_trableshoot="v0.5.1"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 

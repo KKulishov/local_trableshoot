@@ -1,4 +1,8 @@
-- Now version v0.5
+- Now version v0.5.1
+
+## v0.5.1
+
+-- add: show top 20 used swap process&command
 
 ## v0.5
 

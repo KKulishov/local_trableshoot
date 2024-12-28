@@ -53,6 +53,7 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 
 	getProcess_to_ns(file, dir_kubelet)
 	getMem_to_ns(file, dir_kubelet)
+	mem.ShowProcessesSwapUsage(file)
 
 	proc.GetProcessesTree(file)
 	net.PrintNetStat(file, "tcp")
@@ -89,6 +90,8 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	}
 	getProcess_to_ns(file, dir_kubelet)
 	getMem_to_ns(file, dir_kubelet)
+	mem.ShowProcessesSwapUsage(file)
+
 	if *flags.AtopReport {
 		top.Get_atop_processes_lists(file)
 	}
