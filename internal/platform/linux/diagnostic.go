@@ -55,6 +55,9 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 	getMem_to_ns(file, dir_kubelet)
 	mem.ShowProcessesSwapUsage(file)
 
+	proc.ShowTopThreads(file)
+	proc.ShowTopThreadsByMem(file)
+
 	proc.GetProcessesTree(file)
 	net.PrintNetStat(file, "tcp")
 	net.PrintNetStat(file, "udp")
@@ -91,6 +94,8 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 	getProcess_to_ns(file, dir_kubelet)
 	getMem_to_ns(file, dir_kubelet)
 	mem.ShowProcessesSwapUsage(file)
+	proc.ShowTopThreads(file)
+	proc.ShowTopThreadsByMem(file)
 
 	if *flags.AtopReport {
 		top.Get_atop_processes_lists(file)

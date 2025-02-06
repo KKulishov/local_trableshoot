@@ -6,6 +6,7 @@ the file contains a data report:
  - session 
  - atop (cpu/mem/IOps/Net) for top. 
  - top 10 containers used cpu/mem/disk/net (for now docker)
+ - top 20 threads count created pid process 
  - process top cpu and process tree 
  - process top mem
  - process top used swap
@@ -59,7 +60,7 @@ Download and unpack
 
 ```sh 
 # set version 
-version_trableshoot="v0.5.1"
+version_trableshoot="v0.5.2"
 wget -qO- https://github.com/KKulishov/local_trableshoot/releases/download/$version_trableshoot/local_trableshoot.tar.gz | sudo tar xvz -C /usr/local/sbin --strip-components=1 && rm -f local_trableshoot.tar.gz
 ```
 

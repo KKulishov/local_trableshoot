@@ -1,4 +1,8 @@
-- Now version v0.5.1
+- Now version v0.5.2
+
+## v0.5.2
+
+-- add: show top 20 threads count created pid process 
 
 ## v0.5.1
 
