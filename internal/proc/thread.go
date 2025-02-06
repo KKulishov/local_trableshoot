@@ -162,6 +162,10 @@ func ShowTopThreads(file *os.File) error {
 		fmt.Fprintln(file, row)
 	}
 	fmt.Fprintln(file, "</table>")
+	fmt.Fprintln(file, "<table border='1'>")
+	fmt.Fprintln(file, "<h3> Man threads diagnostics: </h3>")
+	fmt.Fprintf(file, "<p>Show stat threads for pid: pidstat -t -p [PID]</p>\n")
+	fmt.Fprintf(file, "<p>Show all threads in system: ps -eLf | wc -l</p>\n")
 	return nil
 }
 
