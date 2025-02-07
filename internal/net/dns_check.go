@@ -15,9 +15,33 @@ import (
 	"github.com/miekg/dns"
 )
 
-// Функция для получения списка DNS-серверов из /etc/resolv.conf
+// Функция для получения списка DNS-серверов
 func getDNSServers() ([]string, error) {
-	file, err := os.Open("/etc/resolv.conf")
+	// Сначала проверяем /etc/systemd/resolved.conf
+	resolvedConfPath := "/etc/systemd/resolved.conf"
+	file, err := os.Open(resolvedConfPath)
+	if err == nil {
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if strings.HasPrefix(line, "DNS=") {
+				// Обрабатываем строку с DNS
+				fields := strings.Split(line, "=")
+				if len(fields) > 1 {
+					dnsList := strings.Fields(fields[1])
+					if len(dnsList) > 0 {
+						return dnsList, nil // Возвращаем список DNS-серверов
+					}
+				}
+			}
+		}
+		// Если поле DNS= пустое или отсутствует, продолжаем с /etc/resolv.conf
+	}
+
+	// Если /etc/systemd/resolved.conf не содержит DNS, проверяем /etc/resolv.conf
+	resolvConfPath := "/etc/resolv.conf"
+	file, err = os.Open(resolvConfPath)
 	if err != nil {
 		return nil, fmt.Errorf("не удалось открыть файл /etc/resolv.conf: %v", err)
 	}
