@@ -1,4 +1,8 @@
-- Now version v0.5.2
+- Now version v0.5.3
+
+## 
+
+-- add: dns check in /etc/systemd/resolved.conf if empty , that check /etc/resolv.conf
 
 ## v0.5.2
 
