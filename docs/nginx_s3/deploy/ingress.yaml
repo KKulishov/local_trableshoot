@@ -17,7 +17,7 @@ metadata:
     app: nginx-s3-gateway
 spec:
   rules:
-  - host: local-trableshoot.sovcombank.group
+  - host: local-trableshoot.xxx.xxx
     http:
       paths:
         - path: /
