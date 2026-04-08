@@ -49,10 +49,15 @@ func (d *LinuxDiagnostic) FullDiagnostics(file *os.File) {
 		containers.GetDockerStatMem(file)
 		//containers.GetDockerStatDisk(file)
 		//containers.GetDockerStatNetwork(file)
+	} else if *flags.ContainerFlag == "containerd" {
+		containers.GetContainerdStatCpu(file)
+		containers.GetContainerdStatMem(file)
+	}
+	if *flags.ContainerFlag == "docker" {
+		getProcess_to_ns(file, dir_kubelet)
+		getMem_to_ns(file, dir_kubelet)
 	}
 
-	getProcess_to_ns(file, dir_kubelet)
-	getMem_to_ns(file, dir_kubelet)
 	mem.ShowProcessesSwapUsage(file)
 
 	proc.ShowTopThreads(file)
@@ -90,9 +95,14 @@ func (d *LinuxDiagnostic) BaseDiagnostics(file *os.File) {
 		containers.GetDockerStatMem(file)
 		//containers.GetDockerStatDisk(file)
 		//containers.GetDockerStatNetwork(file)
+	} else if *flags.ContainerFlag == "containerd" {
+		containers.GetContainerdStatCpu(file)
+		containers.GetContainerdStatMem(file)
 	}
-	getProcess_to_ns(file, dir_kubelet)
-	getMem_to_ns(file, dir_kubelet)
+	if *flags.ContainerFlag == "docker" {
+		getProcess_to_ns(file, dir_kubelet)
+		getMem_to_ns(file, dir_kubelet)
+	}
 	mem.ShowProcessesSwapUsage(file)
 	proc.ShowTopThreads(file)
 	proc.ShowTopThreadsByMem(file)

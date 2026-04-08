@@ -8,7 +8,7 @@ import (
 
 var (
 	version        = configs.Version
-	ContainerFlag  = kingpin.Flag("container", "Specify container runtime (e.g. docker)").Envar("container").Default("").String()
+	ContainerFlag  = kingpin.Flag("container", "Specify container runtime (e.g. docker or containerd)").Envar("container").Default("").String()
 	CheckDns       = kingpin.Flag("check-dns", "Tracing to DNS specified in /etc/resolv.conf, default set true").Envar("CHECK_DNS").Bool()
 	CheckNameDns   = kingpin.Flag("check-dns-name", "checking the DNS name resolution, default set ya.ru").Envar("CHECK_DNS_NAME").Default("ya.ru.").String()
 	CountRotate    = kingpin.Flag("count-rotate", "Delete old files that are older than the specified number, default set 10").Envar("COUNT_ROTATE").Default("10").Int()

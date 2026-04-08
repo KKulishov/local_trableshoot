@@ -1,6 +1,6 @@
 module local_trableshoot
 
-go 1.22.5
+go 1.25.8
 
 require github.com/alecthomas/kingpin/v2 v2.4.0
 

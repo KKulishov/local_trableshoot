@@ -2,10 +2,10 @@
 Local trableshoot linux system  and save to  local report for html format.
 
 the file contains a data report:
- - atop  
+ - atop  /var/log/report_tooz-notebook_08.04.2026_13:56:32.html
  - session 
  - atop (cpu/mem/IOps/Net) for top. 
- - top 10 containers used cpu/mem/disk/net (for now docker)
+ - top 10 containers used cpu/mem (now docker&containerd)
  - top 20 threads count created pid process 
  - process top cpu and process tree 
  - process top mem
@@ -33,7 +33,7 @@ other examples, you can see [here](https://www.mmonit.com/monit/documentation/mo
 
 | Args             | Variable         | Type    | Default | Description      |
 |------------------|------------------|---------|---------|------------------|
-| container        | container        | string  | ""      | Specify container runtime, top 10 cpu&mem usage, (e.g. docker) |
+| container        | container        | string  | ""      | Specify container runtime, top 10 cpu&mem usage, (e.g. docker or containerd) |
 | check-dns      | CHECK_DNS          | Bool    | false   | checking dns availability from /etc/resolv.conf |
 | check-dns-name | CHECK_DNS_NAME     | string  | ya.ru   | checking the DNS name resolution |
 | count-rotate   | COUNT_ROTATE       | int     | 10      | Apllication save report file in /var/log/report_{{ name_host }}_{{ dd.mm.yyyy_hh.mm.ss }}.html . The number of report files is no more than 10 pieces, all older files are of the following format: /var/log/report_*.html , will be deleted.  |
@@ -86,7 +86,7 @@ add s3 upload reports file. example[this](./docs/s3.md)
 
 ## initialize the project and build 
 
-If you need re build , can use this man (go version 1.22):
+If you need re build , can use this man (go version 1.25):
 
 ```go
 go mod init local_trableshoot

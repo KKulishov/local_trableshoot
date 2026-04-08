@@ -1,6 +1,12 @@
+
+## Now version v0.5.4
+
 - Now version v0.5.3
 
-## 
+-- add: perfomance containerd cpu&mem (top10 cpu&mem usage)
+-- add: flags --container="containerd"
+
+## v0.5.3
 
 -- add: dns check in /etc/systemd/resolved.conf if empty , that check /etc/resolv.conf
 
